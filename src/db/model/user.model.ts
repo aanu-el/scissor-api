@@ -1,7 +1,7 @@
 import connection from "../../config/db.config";
 import { DataTypes } from "sequelize";
 
-const User = connection.define('User',
+const UserModel = connection.define('User',
     {
         id: {
             type: DataTypes.INTEGER,
@@ -11,6 +11,7 @@ const User = connection.define('User',
         userUuid: {
             type: DataTypes.STRING,
             allowNull: false,
+            unique: true
         },
         firstName: {
             type: DataTypes.STRING,
@@ -23,6 +24,7 @@ const User = connection.define('User',
         email: {
             type: DataTypes.STRING,
             allowNull: false,
+            unique: true
         },
         password: {
             type: DataTypes.STRING,
@@ -34,5 +36,5 @@ const User = connection.define('User',
     }
 )
 
-export default User;
+export default UserModel;
 

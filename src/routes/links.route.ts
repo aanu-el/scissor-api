@@ -3,7 +3,7 @@ import { getLinks } from "../controllers/links.controller";
 
 
 
-const LinksRouter = Router();
+const LinksRouter: Router = Router();
 
 LinksRouter.get("/links", getLinks);
 
