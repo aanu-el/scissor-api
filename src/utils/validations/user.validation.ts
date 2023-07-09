@@ -1,30 +1,37 @@
-import {
-    validate,
-    validateOrReject,
-    Length,
-    IsEmail,
-    IsString
-} from 'class-validator';
+import { NextFunction, Request, Response } from "express";
+import Joi from "joi";
 
-export class UserValidator {
-    @IsString()
-    firstName!: string;
+const CreateUserSchema = Joi.object({
+    firstName: Joi.string()
+        .min(1)
+        .max(10)
+        .optional()
+        .trim(),
+    lastName: Joi.string()
+        .min(1)
+        .max(10)
+        .optional()
+        .trim(),
+    email: Joi.string()
+        .email()
+        .trim()
+        .required(),
+    password: Joi.string()
+        .trim()
+        .required(),
+    userUuid: Joi.string()
+})
 
-    @IsString()
-    lastName!: string;
+export async function CreateUserValidator(req: Request, res: Response, next: NextFunction) {
+    const user = req.body
 
-    @IsString()
-    @Length(2, 10, {
-            message: "username must between 2 and 10 characters long"
+    try {
+        await CreateUserSchema.validateAsync(user)
+        next()
+    } catch (error: any) {
+        next({
+            message: error.details[0].message,
+            status: 400
         })
-    username!: string;
-
-    @IsEmail()
-    email!: string;
-
-    @IsString()
-    @Length(4, 10, {
-        message: "password must between 4 and 10 characters long"
-        })
-    password!: string;
+    }
 }

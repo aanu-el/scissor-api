@@ -14,6 +14,7 @@ const UserModel = db_config_1.default.define('User', {
     userUuid: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
+        unique: true
     },
     firstName: {
         type: sequelize_1.DataTypes.STRING,
@@ -26,6 +27,7 @@ const UserModel = db_config_1.default.define('User', {
     email: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
+        unique: true
     },
     password: {
         type: sequelize_1.DataTypes.STRING,

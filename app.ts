@@ -6,7 +6,7 @@ import Auth from './src/routes/auth.route';
 require('dotenv').config();
 
 const app: express.Application = express();
-const PORT = process.env.SERVER_PORT;
+const PORT = process.env.PORT;
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))

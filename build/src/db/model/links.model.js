@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const db_config_1 = __importDefault(require("../../config/db.config"));
 const sequelize_1 = require("sequelize");
-const Link = db_config_1.default.define('Link', {
+const LinkModel = db_config_1.default.define('Link', {
     id: {
         type: sequelize_1.DataTypes.INTEGER,
         autoIncrement: true,
@@ -14,6 +14,7 @@ const Link = db_config_1.default.define('Link', {
     userUuid: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: true,
+        unique: true
     },
     url: {
         type: sequelize_1.DataTypes.STRING,
@@ -26,6 +27,7 @@ const Link = db_config_1.default.define('Link', {
     backHalf: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: true,
+        unique: true
     },
     finalUrl: {
         type: sequelize_1.DataTypes.STRING,
@@ -38,4 +40,4 @@ const Link = db_config_1.default.define('Link', {
 }, {
     timestamps: true,
 });
-exports.default = Link;
+exports.default = LinkModel;
