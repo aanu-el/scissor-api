@@ -8,7 +8,7 @@
     "dev": "ts-node app.ts",
     "watch": "nodemon app.ts",
     "build": "tsc -p .",
-    "start": "tsc && nodemon ./build/app.js"
+    "start": "node ./build/app.js"
   },
   "author": "",
   "license": "ISC",
