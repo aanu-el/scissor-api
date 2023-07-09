@@ -8,9 +8,9 @@ export class AuthService {
     generateUUID(): string {
         return uuidv4();
     }
-    
-   hash(password: string){
-       return bcrypt.hash(password, 10);
+
+    hash(password: string) {
+        return bcrypt.hash(password, 10);
     }
 
     compare(password: string, password2: string) {
@@ -18,6 +18,13 @@ export class AuthService {
     }
 
     jwtSign(body: any) {
-        return jwt.sign({user: body}, process.env.JWT_SECRET, { expiresIn: "48h" })
+        return jwt.sign({ user: body }, process.env.JWT_SECRET, { expiresIn: "48h" })
+    }
+
+    getUserFromToken(authorization: any) {
+        const [_, token] = authorization.split(" ");
+        const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString())
+
+        return decodedToken.user
     }
 }

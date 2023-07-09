@@ -1,7 +1,7 @@
 import connection from "../../config/db.config";
 import { DataTypes } from "sequelize";
 
-const Link = connection.define('Link',
+const LinkModel = connection.define('Link',
     {
         id: {
             type: DataTypes.INTEGER,
@@ -11,6 +11,7 @@ const Link = connection.define('Link',
         userUuid: {
             type: DataTypes.STRING,
             allowNull: true,
+            unique: true
         },
         url: {
             type: DataTypes.STRING,
@@ -23,6 +24,7 @@ const Link = connection.define('Link',
         backHalf: {
             type: DataTypes.STRING,
             allowNull: true,
+            unique: true
         },
         finalUrl: {
             type: DataTypes.STRING,
@@ -38,5 +40,5 @@ const Link = connection.define('Link',
     }
 )
 
-export default Link;
+export default LinkModel;
 
