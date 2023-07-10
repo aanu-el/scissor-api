@@ -10,6 +10,8 @@ export class LinkService {
     }
 
     async validateUrl(url: string) {
+        url = url.trim();
+        
         const resolveUrl = await fetch(`https://networkcalc.com/api/dns/lookup/${url}`);
         const response = await resolveUrl.json();
         

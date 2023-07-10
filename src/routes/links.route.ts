@@ -8,7 +8,7 @@ const LinksRouter: Router = Router();
 
 LinksRouter.get("/links", jwtAuth, getAllLinks);
 LinksRouter.get("/links/:id", jwtAuth, getLinkById);
-LinksRouter.post("/links/", jwtAuth, createLink);
+LinksRouter.post("/links", jwtAuth, createLink);
 LinksRouter.put("/links/:id", jwtAuth, updateLink);
 LinksRouter.delete("/links/:id", jwtAuth, deleteLink);
 
