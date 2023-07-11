@@ -16,6 +16,7 @@ exports.deleteLink = exports.updateLink = exports.createLink = exports.getLinkBy
 const links_service_1 = require("../services/links.service");
 const links_model_1 = __importDefault(require("../db/model/links.model"));
 const auth_service_1 = require("../services/auth.service");
+require('dotenv').config();
 const getAllLinks = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const allLinks = yield links_model_1.default.findAll();
     return res.status(200).json({
@@ -42,15 +43,30 @@ const getLinkById = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
 exports.getLinkById = getLinkById;
 const createLink = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const user = new auth_service_1.AuthService().getUserFromToken(req.headers.authorization);
-    const { url, customDomain = null, backHalf = null } = req.body;
+    const userUuid = user.userUuid;
+    let base_domain = process.env.BASE_DOMAIN;
+    let { url, customDomain = null, backHalf = null } = req.body;
     const validateUrl = yield new links_service_1.LinkService().validateUrl(url); //==> validates the url
     if (!validateUrl) {
         return res.status(400).json({
             message: "Invalid URL"
         });
     }
-    // Make sure it is unique
-    if (backHalf !== null) {
+    // Validate the custom domain if it's supplied by the user
+    if (customDomain) {
+        customDomain = customDomain.trim();
+        const validateCustomDomain = yield new links_service_1.LinkService().validateUrl(customDomain);
+        if (!validateCustomDomain) {
+            return res.status(400).json({
+                message: "Invalid custom domain"
+            });
+        }
+        else {
+            base_domain = customDomain;
+        }
+    }
+    // Make sure backHalf is unique if available. If not, generate a random string, 
+    if (backHalf) {
         yield links_model_1.default.findAll({ where: { backHalf: backHalf } })
             .then((link) => {
             if (link) {
@@ -60,6 +76,27 @@ const createLink = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             }
         });
     }
+    else {
+        backHalf = new links_service_1.LinkService().randomstring();
+    }
+    const newLink = {
+        url: url,
+        backHalf: backHalf,
+        userUuid: userUuid,
+        customDomain: base_domain,
+        finalUrl: `${base_domain}/${backHalf}`
+    };
+    // save to db
+    yield links_model_1.default.create({ newLink })
+        .then((link) => {
+        return res.status(201).json({
+            message: "Successfully created link",
+            data: link
+        });
+    }).catch((error) => {
+        console.log(error);
+        return res.status(500).json({ message: "An error occurred", data: error });
+    });
 });
 exports.createLink = createLink;
 const updateLink = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {

@@ -20,6 +20,7 @@ class LinkService {
     }
     validateUrl(url) {
         return __awaiter(this, void 0, void 0, function* () {
+            url = url.trim();
             const resolveUrl = yield fetch(`https://networkcalc.com/api/dns/lookup/${url}`);
             const response = yield resolveUrl.json();
             if (response.status == "OK") {
