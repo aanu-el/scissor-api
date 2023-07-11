@@ -33,6 +33,11 @@ const LinkModel = connection.define('Link',
         qrCode: {
             type: DataTypes.STRING,
             allowNull: true,
+        }, 
+        clicks: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0
         }
     },
     {
