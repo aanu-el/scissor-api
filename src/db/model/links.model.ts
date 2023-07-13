@@ -10,8 +10,7 @@ const LinkModel = connection.define('Link',
         },
         userUuid: {
             type: DataTypes.STRING,
-            allowNull: true,
-            unique: true
+            allowNull: true
         },
         url: {
             type: DataTypes.STRING,

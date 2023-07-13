@@ -67,14 +67,15 @@ const createLink = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
     // Make sure backHalf is unique if available. If not, generate a random string, 
     if (backHalf) {
-        yield links_model_1.default.findAll({ where: { backHalf: backHalf } })
-            .then((link) => {
-            if (link) {
-                return res.status(400).json({
-                    message: "Back half already exists"
-                });
-            }
-        });
+        let lookup = yield links_model_1.default.findAll({ where: { backHalf: backHalf } });
+        if (lookup.length > 0) {
+            return res.status(400).json({
+                message: "Back half already exists"
+            });
+        }
+        else {
+            backHalf = backHalf.trim();
+        }
     }
     else {
         backHalf = new links_service_1.LinkService().randomstring();
@@ -86,8 +87,15 @@ const createLink = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         customDomain: base_domain,
         finalUrl: `${base_domain}/${backHalf}`
     };
+    console.log(newLink);
     // save to db
-    yield links_model_1.default.create({ newLink })
+    yield links_model_1.default.create({
+        userUuid: userUuid,
+        url: url,
+        backHalf: backHalf,
+        customDomain: base_domain,
+        finalUrl: `${base_domain}/${backHalf}`
+    })
         .then((link) => {
         return res.status(201).json({
             message: "Successfully created link",

@@ -8,6 +8,7 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const db_config_1 = __importDefault(require("./src/config/db.config"));
 const links_route_1 = __importDefault(require("./src/routes/links.route"));
 const auth_route_1 = __importDefault(require("./src/routes/auth.route"));
+const index_route_1 = __importDefault(require("./src/routes/index.route"));
 require('dotenv').config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT;
@@ -15,6 +16,7 @@ app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use('/api/v1/auth', auth_route_1.default); //==> Authentication
 app.use('/api/v1', links_route_1.default);
+app.use('', index_route_1.default);
 app.get('/api/v1', (req, res) => res.json({
     'status': 'success',
     'message': 'Welcome to Scissor'

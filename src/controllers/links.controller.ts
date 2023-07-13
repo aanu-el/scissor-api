@@ -70,15 +70,7 @@ export const createLink: RequestHandler = async (req, res, next) => {
     } else {
         backHalf = new LinkService().randomstring();
     }
-
-    const newLink: object = {
-        url: url,
-        backHalf: backHalf,
-        userUuid: userUuid,
-        customDomain: base_domain,
-        finalUrl: `${base_domain}/${backHalf}`
-    }
-    console.log(newLink);
+    
     // save to db
     await LinkModel.create(
         {
@@ -101,7 +93,7 @@ export const createLink: RequestHandler = async (req, res, next) => {
 
 export const updateLink: RequestHandler = async (req, res, next) => {
     const link = req.body;
-    
+
 }
 
 export const deleteLink: RequestHandler = async (req, res, next) => {
