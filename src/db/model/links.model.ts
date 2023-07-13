@@ -10,8 +10,7 @@ const LinkModel = connection.define('Link',
         },
         userUuid: {
             type: DataTypes.STRING,
-            allowNull: true,
-            unique: true
+            allowNull: true
         },
         url: {
             type: DataTypes.STRING,
@@ -33,6 +32,11 @@ const LinkModel = connection.define('Link',
         qrCode: {
             type: DataTypes.STRING,
             allowNull: true,
+        }, 
+        clicks: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0
         }
     },
     {

@@ -18,7 +18,7 @@ async function jwtAuth(req: Request, res: Response, next: NextFunction) {
         if (isValid) {
             next()
         } else {
-            res.status(401).send("Unauthorized")
+            res.status(401).json({ status: "Unauthorized", message: "Invalid token provided"})
         }
 
     } catch (err) {

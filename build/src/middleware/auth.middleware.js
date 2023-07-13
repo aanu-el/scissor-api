@@ -24,7 +24,7 @@ function jwtAuth(req, res, next) {
                 next();
             }
             else {
-                res.status(401).send("Unauthorized");
+                res.status(401).json({ status: "Unauthorized", message: "Invalid token provided" });
             }
         }
         catch (err) {

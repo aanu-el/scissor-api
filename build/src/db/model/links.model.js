@@ -36,6 +36,11 @@ const LinkModel = db_config_1.default.define('Link', {
     qrCode: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: true,
+    },
+    clicks: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
     }
 }, {
     timestamps: true,
