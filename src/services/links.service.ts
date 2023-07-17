@@ -1,4 +1,12 @@
 const randomstring = require('randomstring');
+const cloudinary = require('cloudinary').v2
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true
+});
 
 export class LinkService {
 
@@ -32,4 +40,13 @@ export class LinkService {
         }
     }
 
-}
+    async generateQR(url: string) {
+        url = encodeURI(url.trim());
+
+        const qrCode = `https://api.qrserver.com/v1/create-qr-code/?data=${url}`
+
+        const cloudinaryResponse = await cloudinary.uploader.upload(qrCode);
+
+        return cloudinaryResponse.secure_url;
+    }
+} 
