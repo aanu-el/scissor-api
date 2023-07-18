@@ -45,6 +45,7 @@ export class LinkService {
 
         const qrCode = `https://api.qrserver.com/v1/create-qr-code/?data=${url}`
 
+        // Upload image to cloudinary and return the url
         const cloudinaryResponse = await cloudinary.uploader.upload(qrCode);
 
         return cloudinaryResponse.secure_url;
