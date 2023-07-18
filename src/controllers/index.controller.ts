@@ -7,11 +7,11 @@ require('dotenv').config();
 export const urlRedirect: RequestHandler = async (req, res, next) => {
     const backHalf = req.params.backHalf.trim();
 
-    const lookup = await LinkModel.findOne({ where: { backHalf: backHalf } });
-
-    if (!lookup) return res.status(400).json({ message: "Not Found" });
-
     try {
+        const lookup = await LinkModel.findOne({ where: { backHalf: backHalf } });
+
+        if (!lookup) return res.status(400).json({ message: "Not Found" });
+
         let url = lookup.dataValues.url;
 
         const clicks = lookup.dataValues.clicks + 1;
@@ -20,8 +20,10 @@ export const urlRedirect: RequestHandler = async (req, res, next) => {
 
         res.redirect(301, url);
     } catch (error) {
-        console.log(error);
-        return res.status(400).json({ message: "An error occurred" });
+        next({
+            message: error,
+            status: 500
+        })
     }
 
 }

@@ -1,7 +1,6 @@
 import { RequestHandler } from "express";
 import UserModel from "../db/model/user.model";
 import { AuthService } from "../services/auth.service";
-import ResponseHandler from "../utils/response-helper/response-helper";
 
 
 export const signupController: RequestHandler = async (req, res, next) => {
