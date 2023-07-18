@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@sentry/node": "^7.58.1",
+    "@sentry/node": "^7.59.2",
     "@types/body-parser": "^1.19.2",
     "bcrypt": "^5.1.0",
     "class-validator": "^0.14.0",

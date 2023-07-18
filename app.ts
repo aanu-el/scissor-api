@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
 import helmet from "helmet";
+const Sentry = require('@sentry/node')
 require('dotenv').config();
 
 /* Import Configs  */
@@ -16,6 +17,11 @@ import UrlRedirectRouter from './src/routes/index.route';
 
 const PORT = process.env.PORT;
 const app: express.Application = express();
+
+// ---------- Sentry Config ----------
+const SENTRY_DSN = process.env.SENTRY_DSN;
+Sentry.init({ dsn: SENTRY_DSN });
+app.use(Sentry.Handlers.requestHandler());
 
 app.use(helmet()); //=> Use Helmet!
 
@@ -33,7 +39,6 @@ app.get('/api/v1', (req: Request, res: Response) => res.json({
     'status': 'success',
     'message': 'Welcome to Scissor'
 })); //=> Home Route
-
 
 /* Database Connection */
 connection
@@ -62,6 +67,18 @@ client.on('error', (err) => {
         console.error('error while connecting redis', error);
     }
 })();
+
+// --------- Sentry Error Handler ------------
+app.use(Sentry.Handlers.errorHandler());
+
+// Optional fallthrough error handler
+app.use(function onError(err: any, req: Request, res: any, next: NextFunction) {
+    res.statusCode = err.status || 500;
+    res.json({
+        message: err.message,
+        sentry_error_id: res.sentry
+    })
+})
 
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
