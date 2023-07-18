@@ -1,14 +1,22 @@
 import { RequestHandler } from "express";
+
+import { client } from "../config/redis.config";
 import { LinkService } from "../services/links.service";
 import LinkModel from "../db/model/links.model";
 import { AuthService } from "../services/auth.service";
+
 require('dotenv').config();
+
 
 export const getAllLinks: RequestHandler = async (req, res, next) => {
     const user = new AuthService().getUserFromToken(req.headers.authorization);
     const userUuid = user.userUuid;
 
     const allLinks = await LinkModel.findAll({ where: { userUuid: userUuid } });
+
+    // Save cached results to redis
+    await client.setEx(userUuid, 3600, JSON.stringify(allLinks));
+
     return res.status(200).json({
         message: "Success",
         data: allLinks
@@ -20,18 +28,20 @@ export const getLinkById: RequestHandler = async (req, res, next) => {
     const userUuid = user.userUuid;
     const id = req.params.id;
 
-    await LinkModel.findOne({ where: { id: id, userUuid: userUuid } })
-        .then((link) => {
-            return res.status(200).json({
-                message: "Success",
-                data: link
-            })
-        }).catch((error) => {
-            return res.status(500).json({
-                message: "Error",
-                error: error
-            })
-        })
+    const link = await LinkModel.findOne({ where: { id: id, userUuid: userUuid } })
+
+    if (!link) {
+        return res.status(400).json({ status: false, message: "Not Found! Invalid ID" })
+    }
+
+    // Save cached results to redis
+    await client.set(id, JSON.stringify(link));
+
+    return res.status(200).json({
+        message: "Success",
+        data: link
+    })
+
 }
 
 
@@ -42,7 +52,8 @@ export const createLink: RequestHandler = async (req, res, next) => {
 
     let { url, customDomain = null, backHalf = null } = req.body;
 
-    const validateUrl = await new LinkService().validateUrl(url); //==> validates the url
+    //validates the url using networkcalc api
+    const validateUrl = await new LinkService().validateUrl(url);
 
     if (!validateUrl) {
         return res.status(400).json({
@@ -78,9 +89,11 @@ export const createLink: RequestHandler = async (req, res, next) => {
     }
 
     const finalUrl = `${base_domain}/${backHalf}`
+
+    // Generate QR code for the shortened url and upload to cloudinary
     const qrCode = await new LinkService().generateQR(finalUrl);
 
-    // save to db
+    // Save to db
     await LinkModel.create(
         {
             userUuid: userUuid,

@@ -3,12 +3,16 @@ import bodyParser from 'body-parser';
 import helmet from "helmet";
 require('dotenv').config();
 
-/* Import Modules  */
+/* Import Configs  */
 import connection from './src/config/db.config';
+import { client } from './src/config/redis.config';
+import { Limiter } from './src/config/rate-limit.config';
+
+/* Import Modules  */
 import LinksRouter from './src/routes/links.route';
 import Auth from './src/routes/auth.route';
 import UrlRedirectRouter from './src/routes/index.route';
-import { Limiter } from './src/config/rate-limit.config';
+
 
 const PORT = process.env.PORT;
 const app: express.Application = express();
@@ -31,7 +35,7 @@ app.get('/api/v1', (req: Request, res: Response) => res.json({
 })); //=> Home Route
 
 
-
+/* Database Connection */
 connection
     .sync()
     .then(() => {
@@ -40,5 +44,24 @@ connection
     .catch((err) => {
         console.log("Error", err);
     });
+
+
+/* Redis Connection for caching */
+client.on('ready', () => {
+    console.log('redis is connected');
+});
+
+client.on('error', (err) => {
+    console.log('redis is disconnected: ', err);
+});
+
+(async () => {
+    try {
+        await client.connect();
+    } catch (error) {
+        console.error('error while connecting redis', error);
+    }
+})();
+
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
